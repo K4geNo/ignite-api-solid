@@ -1,5 +1,5 @@
+import { UsersRepository } from '@/repositories/users-repository'
 import { hash } from 'bcryptjs'
-import { prisma } from '@/lib/prisma'
 
 interface RegisterBody {
     email: string
@@ -8,20 +8,16 @@ interface RegisterBody {
 }
 
 export class RegisterUseCase {
-    constructor(private usersRepository: any) {}
+    constructor(private usersRepository: UsersRepository) {}
 
     async execute({ email, name, password }: RegisterBody) {
-        const userExists = await prisma.user.findFirst({
-            where: {
-                email,
-            },
-        })
+        const password_hash = await hash(password, 6)
 
-        if (userExists) {
+        const usersAlreadyExists = await this.usersRepository.findByEmail(email)
+
+        if (usersAlreadyExists) {
             throw new Error('User already exists')
         }
-
-        const password_hash = await hash(password, 6)
 
         await this.usersRepository.create({
             email,
