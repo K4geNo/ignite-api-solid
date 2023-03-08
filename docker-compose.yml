@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    db:
+        image: bitnami/postgresql
+        environment:
+            POSTGRES_USERNAME: docker
+            POSTGRES_PASSWORD: docker
+            POSTGRES_DB: apisolid
+        ports:
+            - "5432:5432"
